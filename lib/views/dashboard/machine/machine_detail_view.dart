@@ -1,23 +1,55 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:veloce_task_frontend/common_components/info_card.dart';
+import 'package:veloce_task_frontend/common_components/info_row.dart';
+import 'package:veloce_task_frontend/common_components/machine_header_card.dart';
 import 'package:veloce_task_frontend/controllers/machine_detail_controller.dart';
+import 'package:veloce_task_frontend/controllers/machine_controller.dart';
+import 'package:veloce_task_frontend/core/utils/custom_loader.dart';
+import 'package:veloce_task_frontend/core/theme/app_colors.dart';
+import 'package:veloce_task_frontend/views/dashboard/machine/machine_edit_view.dart';
 
-class MachineDetailView extends StatelessWidget {
+class MachineDetailView extends StatefulWidget {
   final String machineId;
 
-  MachineDetailView({super.key, required this.machineId});
+  const MachineDetailView({super.key, required this.machineId});
 
-  final controller = Get.put(MachineDetailController());
+  @override
+  State<MachineDetailView> createState() => _MachineDetailViewState();
+}
+
+class _MachineDetailViewState extends State<MachineDetailView> {
+  late final MachineDetailController controller;
+
+  @override
+  void initState() {
+    super.initState();
+
+    controller = Get.put(MachineDetailController());
+
+    controller.fetchMachineById(widget.machineId);
+  }
+
+  @override
+  void dispose() {
+    Get.delete<MachineDetailController>();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    controller.fetchMachineById(machineId); // 🔥 API call
-
     return Scaffold(
-      appBar: AppBar(title: const Text("Machine Detail")),
+      backgroundColor: AppColors.background,
+
+      appBar: AppBar(
+        title: const Text("Machine Detail"),
+        centerTitle: true,
+        backgroundColor: AppColors.primary,
+      ),
+
       body: Obx(() {
         if (controller.isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
+          return const CustomLoader();
         }
 
         final machine = controller.machine.value;
@@ -29,24 +61,120 @@ class MachineDetailView extends StatelessWidget {
         final manufacturer = machine['manufacturerId'];
         final location = machine['locationId'];
 
-        return Padding(
+        return SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Machine: ${machine['machineName']}"),
-              Text("Serial: ${machine['serialNumber']}"),
-              Text("Model: ${machine['model']}"),
-              Text("Year: ${machine['year']}"),
-
-              const SizedBox(height: 10),
-
-              Text(
-                "Manufacturer: ${manufacturer != null ? manufacturer['name'] : 'Not Assigned'}",
+              MachineHeaderCard(
+                name: machine['machineName'] ?? '-',
+                model: machine['model'] ?? '-',
               ),
 
-              Text(
-                "Location: ${location != null ? location['name'] : 'Not Assigned'}",
+              const SizedBox(height: 20),
+
+              InfoCard(
+                children: [
+                  InfoRow(
+                    icon: Icons.confirmation_number,
+                    label: "Serial",
+                    value: machine['serialNumber'] ?? '-',
+                  ),
+                  InfoRow(
+                    icon: Icons.memory,
+                    label: "Model",
+                    value: machine['model'] ?? '-',
+                  ),
+                  InfoRow(
+                    icon: Icons.calendar_today,
+                    label: "Year",
+                    value: machine['year']?.toString() ?? '-',
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 15),
+
+              InfoCard(
+                children: [
+                  InfoRow(
+                    icon: Icons.factory,
+                    label: "Manufacturer",
+                    value: manufacturer != null
+                        ? manufacturer['name']
+                        : "Not Assigned",
+                  ),
+                  InfoRow(
+                    icon: Icons.location_on,
+                    label: "Location",
+                    value: location != null ? location['name'] : "Not Assigned",
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 25),
+
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
+                      onPressed: () {
+                        Get.to(() => MachineEditView(machine: machine));
+                      },
+                      child: const Text(
+                        "Edit",
+                        style: TextStyle(color: AppColors.background),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(width: 12),
+
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
+                      onPressed: () async {
+                        final confirm = await Get.dialog(
+                          AlertDialog(
+                            title: const Text("Delete Machine"),
+                            content: const Text(
+                              "Are you sure you want to delete this machine?",
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Get.back(result: false),
+                                child: const Text("Cancel"),
+                              ),
+                              TextButton(
+                                onPressed: () => Get.back(result: true),
+                                child: const Text("Delete"),
+                              ),
+                            ],
+                          ),
+                        );
+
+                        if (confirm == true) {
+                          final masterController =
+                              Get.find<MachineController>();
+
+                          await masterController.deleteMachine(machine['_id']);
+
+                          Get.back();
+                        }
+                      },
+                      child: const Text(
+                        "Delete",
+                        style: TextStyle(color: AppColors.background),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

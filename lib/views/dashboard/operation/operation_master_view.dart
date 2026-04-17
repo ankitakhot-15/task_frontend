@@ -1,39 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:veloce_task_frontend/controllers/machine_controller.dart';
-import 'package:veloce_task_frontend/core/theme/app_colors.dart';
+import 'package:veloce_task_frontend/controllers/operation_controller.dart';
 import 'package:veloce_task_frontend/core/utils/custom_loader.dart';
-import 'package:veloce_task_frontend/views/dashboard/machine/machine_create_view.dart';
-import 'package:veloce_task_frontend/views/dashboard/machine/machine_detail_view.dart';
 import 'package:veloce_task_frontend/core/theme/app_colors.dart';
 
-class MachineMasterView extends StatelessWidget {
-  MachineMasterView({super.key});
+class OperationMasterView extends StatelessWidget {
+  OperationMasterView({super.key});
 
-  final MachineController controller = Get.put(MachineController());
+  final OperationController controller = Get.put(OperationController());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.background,
+
+      // 🔷 AppBar
       appBar: AppBar(
-        title: const Text("Machine Master"),
+        title: const Text("Operation Master"),
         centerTitle: true,
         backgroundColor: AppColors.primary,
       ),
-      backgroundColor: AppColors.background,
 
+      // 🔷 Body
       body: Obx(() {
         if (controller.isLoading.value) {
           return const CustomLoader();
         }
 
-        if (controller.machineList.isEmpty) {
-          return const Center(child: Text("No Machines Found"));
+        if (controller.operationList.isEmpty) {
+          return const Center(child: Text("No Operations Found"));
         }
 
         return Padding(
           padding: const EdgeInsets.all(12),
           child: Column(
             children: [
+              // 🔷 Header
               Container(
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 decoration: BoxDecoration(
@@ -45,7 +47,7 @@ class MachineMasterView extends StatelessWidget {
                     Expanded(
                       child: Center(
                         child: Text(
-                          "Name",
+                          "Operation Name",
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),
@@ -53,15 +55,7 @@ class MachineMasterView extends StatelessWidget {
                     Expanded(
                       child: Center(
                         child: Text(
-                          "Serial",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Center(
-                        child: Text(
-                          "Model",
+                          "Type",
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),
@@ -72,16 +66,18 @@ class MachineMasterView extends StatelessWidget {
 
               const SizedBox(height: 12),
 
+              // 🔷 List
               Expanded(
                 child: ListView.builder(
-                  itemCount: controller.machineList.length,
+                  itemCount: controller.operationList.length,
                   itemBuilder: (context, index) {
-                    final item = controller.machineList[index];
+                    final item = controller.operationList[index];
 
                     return InkWell(
                       borderRadius: BorderRadius.circular(12),
                       onTap: () {
-                        Get.to(() => MachineDetailView(machineId: item['_id']));
+                        // 👉 Navigate to detail screen (later)
+                        // Get.toNamed(AppRoutes.operationDetail, arguments: item['_id']);
                       },
                       child: Container(
                         margin: const EdgeInsets.only(bottom: 10),
@@ -97,13 +93,19 @@ class MachineMasterView extends StatelessWidget {
                           border: Border.all(
                             color: AppColors.grey.withOpacity(0.2),
                           ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.05),
+                              blurRadius: 6,
+                            ),
+                          ],
                         ),
                         child: Row(
                           children: [
                             Expanded(
                               child: Center(
                                 child: Text(
-                                  item['machineName'] ?? '-',
+                                  item['name'] ?? '-',
                                   style: const TextStyle(
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -113,17 +115,10 @@ class MachineMasterView extends StatelessWidget {
                             Expanded(
                               child: Center(
                                 child: Text(
-                                  item['serialNumber'] ?? '-',
-                                  style: const TextStyle(color: AppColors.grey),
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: Center(
-                                child: Text(
-                                  item['model'] ?? '-',
+                                  item['type']?.toString() ?? '-',
                                   style: TextStyle(
-                                    color: AppColors.primary.withOpacity(0.8),
+                                    color:
+                                        AppColors.primary.withOpacity(0.8),
                                   ),
                                 ),
                               ),
@@ -140,25 +135,13 @@ class MachineMasterView extends StatelessWidget {
         );
       }),
 
+      // 🔷 Floating Button (Add Operation)
       floatingActionButton: FloatingActionButton(
         backgroundColor: AppColors.primary,
-        child: const Icon(Icons.add, color: AppColors.background),
-
-        onPressed: () async {
-          final result = await Get.to(() => const MachineCreateView());
-
-          if (result != null) {
-            controller.machineList.insert(0, result);
-
-            controller.machineList.refresh();
-
-            Get.snackbar(
-              "Success",
-              "Machine added to list",
-              snackPosition: SnackPosition.BOTTOM,
-            );
-          }
+        onPressed: () {
+          // 👉 Open Add Operation Dialog / Screen
         },
+        child: const Icon(Icons.add),
       ),
     );
   }
