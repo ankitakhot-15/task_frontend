@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:veloce_task_frontend/core/network/NetworkGuard%20.dart';
 import '../core/api/api_service.dart';
 import '../core/api/api_endpoints.dart';
 
@@ -19,7 +20,10 @@ class MachineController extends GetxController {
     super.onInit();
   }
 
+  // ================= FETCH ALL =================
   Future<void> fetchAllData() async {
+    if (!await NetworkGuard.ensureInternet()) return;
+
     try {
       isLoading(true);
 
@@ -43,6 +47,7 @@ class MachineController extends GetxController {
     }
   }
 
+  // ================= ADD MACHINE =================
   Future<Map<String, dynamic>?> addMachine({
     required String machineName,
     required String serialNumber,
@@ -52,6 +57,8 @@ class MachineController extends GetxController {
     required int type,
     required String locationId,
   }) async {
+    if (!await NetworkGuard.ensureInternet()) return null;
+
     try {
       isAdding(true);
 
@@ -70,16 +77,16 @@ class MachineController extends GetxController {
       if (res != null && res['success'] == true) {
         return Map<String, dynamic>.from(res['data']);
       }
-
       return null;
     } catch (e) {
-      Get.snackbar("Error", e.toString());
+      // Get.snackbar("Error", e.toString());
       return null;
     } finally {
       isAdding(false);
     }
   }
 
+  // ================= UPDATE MACHINE =================
   Future<Map<String, dynamic>?> updateMachine({
     required String id,
     required String machineName,
@@ -90,6 +97,8 @@ class MachineController extends GetxController {
     required int type,
     required String locationId,
   }) async {
+    if (!await NetworkGuard.ensureInternet()) return null;
+
     try {
       isLoading(true);
 
@@ -108,10 +117,8 @@ class MachineController extends GetxController {
       if (res['success'] == true) {
         final updatedMachine = Map<String, dynamic>.from(res['data']);
 
-        // ✅ update detail state
         machine.value = updatedMachine;
 
-        // ✅ update list locally
         final index = machineList.indexWhere((m) => m['_id'] == id);
 
         if (index != -1) {
@@ -120,7 +127,6 @@ class MachineController extends GetxController {
         }
 
         Get.snackbar("Success", "Machine updated");
-
         return updatedMachine;
       }
 
@@ -133,7 +139,10 @@ class MachineController extends GetxController {
     }
   }
 
+  // ================= DELETE MACHINE =================
   Future<void> deleteMachine(String id) async {
+    if (!await NetworkGuard.ensureInternet()) return;
+
     try {
       isLoading(true);
 
@@ -141,7 +150,6 @@ class MachineController extends GetxController {
 
       if (res['success'] == true) {
         Get.snackbar("Success", "Machine deleted");
-
         await fetchAllData();
       }
     } catch (e) {

@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:http/http.dart' as http;
 
 class ApiService {
@@ -39,11 +41,7 @@ class ApiService {
       log("=====================Request Body: $body");
 
       final response = await http
-          .post(
-            Uri.parse(url),
-            headers: _headers(),
-            body: jsonEncode(body),
-          )
+          .post(Uri.parse(url), headers: _headers(), body: jsonEncode(body))
           .timeout(_timeout);
 
       log("============POST Response Status: ${response.statusCode}");
@@ -69,11 +67,7 @@ class ApiService {
       log(" Request Body: $body");
 
       final response = await http
-          .put(
-            Uri.parse(url),
-            headers: _headers(),
-            body: jsonEncode(body),
-          )
+          .put(Uri.parse(url), headers: _headers(), body: jsonEncode(body))
           .timeout(_timeout);
 
       log("===================== PUT Response Status: ${response.statusCode}");
@@ -119,10 +113,7 @@ class ApiService {
   // 🔹 HEADERS
   // =======================
   Map<String, String> _headers() {
-    return {
-      "Content-Type": "application/json",
-      "Accept": "application/json",
-    };
+    return {"Content-Type": "application/json", "Accept": "application/json"};
   }
 
   // =======================
@@ -137,7 +128,9 @@ class ApiService {
         return body;
 
       case 400:
-        throw Exception("Bad Request: ${body ?? response.body}");
+        final message = body is Map ? body["message"] : "Bad Request";
+        Get.snackbar("Alert", message);
+        throw Exception(message);
 
       case 401:
         throw Exception("Unauthorized Access");
