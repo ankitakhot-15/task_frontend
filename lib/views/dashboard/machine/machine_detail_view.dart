@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:veloce_task_frontend/common_components/app_btn.dart';
 import 'package:veloce_task_frontend/common_components/info_card.dart';
 import 'package:veloce_task_frontend/common_components/info_row.dart';
 import 'package:veloce_task_frontend/common_components/machine_header_card.dart';
@@ -116,29 +117,22 @@ class _MachineDetailViewState extends State<MachineDetailView> {
               Row(
                 children: [
                   Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                      ),
+                    child: AppButton(
+                      text: "Edit",
+                      icon: Icons.edit,
                       onPressed: () {
                         Get.to(() => MachineEditView(machine: machine));
                       },
-                      child: const Text(
-                        "Edit",
-                        style: TextStyle(color: AppColors.background),
-                      ),
                     ),
                   ),
 
                   const SizedBox(width: 12),
 
                   Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                      ),
+                    child: AppButton(
+                      text: "Delete",
+                      icon: Icons.delete,
+                      color: Colors.red,
                       onPressed: () async {
                         final confirm = await Get.dialog(
                           AlertDialog(
@@ -165,14 +159,12 @@ class _MachineDetailViewState extends State<MachineDetailView> {
 
                           await masterController.deleteMachine(machine['_id']);
 
-                          Get.back();
+                          Get.back(); // close detail page
                         }
                       },
-                      child: const Text(
-                        "Delete",
-                        style: TextStyle(color: AppColors.background),
-                      ),
                     ),
+
+                    
                   ),
                 ],
               ),

@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:veloce_task_frontend/common_components/app_btn.dart';
 import 'package:veloce_task_frontend/controllers/machine_controller.dart';
 import 'package:veloce_task_frontend/core/theme/app_colors.dart';
 import 'package:veloce_task_frontend/core/utils/custom_loader.dart';
@@ -77,43 +78,29 @@ class _MachineCreateViewState extends State<MachineCreateView> {
 
                       SizedBox(
                         width: double.infinity,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primary,
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                          ),
-                          onPressed: () async {
-                            if (!_formKey.currentState!.validate()) return;
+                        child: Obx(() {
+                          return AppButton(
+                            text: "Create Machine",
+                            isLoading: controller.isAdding.value,
+                            onPressed: () async {
+                              if (!_formKey.currentState!.validate()) return;
 
-                            final res = await controller.addMachine(
-                              machineName: nameCtrl.text.trim(),
-                              serialNumber: serialCtrl.text.trim(),
-                              manufacturerId: selectedManufacturer!,
-                              model: modelCtrl.text.trim(),
-                              year: int.tryParse(yearCtrl.text) ?? 0,
-                              type: 1,
-                              locationId: selectedLocation!,
-                            );
+                              final res = await controller.addMachine(
+                                machineName: nameCtrl.text.trim(),
+                                serialNumber: serialCtrl.text.trim(),
+                                manufacturerId: selectedManufacturer!,
+                                model: modelCtrl.text.trim(),
+                                year: int.tryParse(yearCtrl.text) ?? 0,
+                                type: 1,
+                                locationId: selectedLocation!,
+                              );
 
-                            log("CREATE RESULT: $res");
-
-                            if (res != null) {
-                              nameCtrl.clear();
-                              serialCtrl.clear();
-                              modelCtrl.clear();
-                              yearCtrl.clear();
-                              selectedManufacturer = null;
-                              selectedLocation = null;
-                              setState(() {});
-
-                              Get.back(result: res);
-                            }
-                          },
-                          child: const Text(
-                            "Create Machine",
-                            style: TextStyle(color: AppColors.background),
-                          ),
-                        ),
+                              if (res != null) {
+                                Get.back(result: res);
+                              }
+                            },
+                          );
+                        }),
                       ),
                     ],
                   ),

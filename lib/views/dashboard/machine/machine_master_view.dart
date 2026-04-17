@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:veloce_task_frontend/controllers/machine_controller.dart';
 import 'package:veloce_task_frontend/core/theme/app_colors.dart';
+import 'package:veloce_task_frontend/core/theme/app_textstyles.dart';
 import 'package:veloce_task_frontend/core/utils/custom_loader.dart';
 import 'package:veloce_task_frontend/views/dashboard/machine/machine_create_view.dart';
 import 'package:veloce_task_frontend/views/dashboard/machine/machine_detail_view.dart';
-import 'package:veloce_task_frontend/core/theme/app_colors.dart';
 
 class MachineMasterView extends StatelessWidget {
   MachineMasterView({super.key});
@@ -40,13 +40,13 @@ class MachineMasterView extends StatelessWidget {
                   color: AppColors.primary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Row(
+                child: Row(
                   children: [
                     Expanded(
                       child: Center(
                         child: Text(
                           "Name",
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          style: AppTextStyles.heading(context),
                         ),
                       ),
                     ),
@@ -54,7 +54,7 @@ class MachineMasterView extends StatelessWidget {
                       child: Center(
                         child: Text(
                           "Serial",
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          style: AppTextStyles.heading(context),
                         ),
                       ),
                     ),
@@ -62,7 +62,7 @@ class MachineMasterView extends StatelessWidget {
                       child: Center(
                         child: Text(
                           "Model",
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          style: AppTextStyles.heading(context),
                         ),
                       ),
                     ),
@@ -122,7 +122,7 @@ class MachineMasterView extends StatelessWidget {
                               child: Center(
                                 child: Text(
                                   item['model'] ?? '-',
-                                  style: TextStyle(
+                                  style: AppTextStyles.body(context).copyWith(
                                     color: AppColors.primary.withOpacity(0.8),
                                   ),
                                 ),
