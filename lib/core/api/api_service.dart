@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:http/http.dart' as http;
 
 class ApiService {
@@ -9,21 +10,34 @@ class ApiService {
   // =======================
   Future<dynamic> get(String url) async {
     try {
+      log("=========GET Request: $url==============");
+
       final response = await http
           .get(Uri.parse(url), headers: _headers())
           .timeout(_timeout);
 
-      return _handleResponse(response);
+      log("====================GET Response Status: ${response.statusCode}");
+      log("====================GET Response Body: ${response.body}");
+
+      final result = _handleResponse(response);
+
+      log("✅========= Parsed GET Data: $result");
+
+      return result;
     } catch (e) {
+      log("==========❌ GET Error: $e");
       throw Exception("GET API Error: $e");
     }
   }
 
   // =======================
-  // 🔹 POST API (CREATE)
+  // 🔹 POST API
   // =======================
   Future<dynamic> post(String url, Map<String, dynamic> body) async {
     try {
+      log("============== POST Request: $url=================");
+      log("=====================Request Body: $body");
+
       final response = await http
           .post(
             Uri.parse(url),
@@ -32,17 +46,28 @@ class ApiService {
           )
           .timeout(_timeout);
 
-      return _handleResponse(response);
+      log("============POST Response Status: ${response.statusCode}");
+      log("============= POST Response Body: ${response.body}");
+
+      final result = _handleResponse(response);
+
+      log("✅ =============Parsed POST Data: $result");
+
+      return result;
     } catch (e) {
+      log("============❌ POST Error: $e");
       throw Exception("POST API Error: $e");
     }
   }
 
   // =======================
-  // 🔹 PUT API (UPDATE)
+  // 🔹 PUT API
   // =======================
   Future<dynamic> put(String url, Map<String, dynamic> body) async {
     try {
+      log("================ PUT Request: $url===================");
+      log(" Request Body: $body");
+
       final response = await http
           .put(
             Uri.parse(url),
@@ -51,8 +76,16 @@ class ApiService {
           )
           .timeout(_timeout);
 
-      return _handleResponse(response);
+      log("===================== PUT Response Status: ${response.statusCode}");
+      log("==================== PUT Response Body: ${response.body}");
+
+      final result = _handleResponse(response);
+
+      log("✅================= Parsed PUT Data: $result");
+
+      return result;
     } catch (e) {
+      log("==============❌ PUT Error: $e");
       throw Exception("PUT API Error: $e");
     }
   }
@@ -62,25 +95,33 @@ class ApiService {
   // =======================
   Future<dynamic> delete(String url) async {
     try {
+      log("==========DELETE Request: $url==============");
+
       final response = await http
           .delete(Uri.parse(url), headers: _headers())
           .timeout(_timeout);
 
-      return _handleResponse(response);
+      log("============DELETE Response Status: ${response.statusCode}");
+      log("============DELETE Response Body: ${response.body}");
+
+      final result = _handleResponse(response);
+
+      log("✅============= Parsed DELETE Data: $result");
+
+      return result;
     } catch (e) {
+      log("===============❌ DELETE Error: $e");
       throw Exception("DELETE API Error: $e");
     }
   }
 
   // =======================
-  // 🔹 COMMON HEADERS
+  // 🔹 HEADERS
   // =======================
   Map<String, String> _headers() {
     return {
       "Content-Type": "application/json",
       "Accept": "application/json",
-      // Add token here if needed:
-      // "Authorization": "Bearer YOUR_TOKEN",
     };
   }
 

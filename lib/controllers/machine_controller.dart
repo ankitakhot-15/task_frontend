@@ -1,36 +1,43 @@
 import 'package:get/get.dart';
 import '../core/api/api_service.dart';
 import '../core/api/api_endpoints.dart';
-import '../data/models/machine_model.dart';
 
 class MachineController extends GetxController {
-  var machines = <MachineModel>[].obs;
+  final ApiService api = ApiService();
+
   var isLoading = false.obs;
 
-  final ApiService api = ApiService();
+  var machineList = <Map<String, dynamic>>[].obs;
+  var locationList = <Map<String, dynamic>>[].obs;
+  var manufacturerList = <Map<String, dynamic>>[].obs;
 
   @override
   void onInit() {
-    fetchMachines();
+    fetchAllData();
     super.onInit();
   }
 
-  Future<void> fetchMachines() async {
+  Future<void> fetchAllData() async {
     try {
-      isLoading.value = true;
+      isLoading(true);
 
-      final data = await api.get(ApiEndpoints.machines);
+      final results = await Future.wait([
+        api.get(ApiEndpoints.machines),
+        api.get(ApiEndpoints.locations),
+        api.get(ApiEndpoints.manufacturers),
+      ]);
 
-      machines.value = List<MachineModel>.from(
-        data.map((e) => MachineModel.fromJson(e)),
+      machineList.value = List<Map<String, dynamic>>.from(results[0]['data']);
+
+      locationList.value = List<Map<String, dynamic>>.from(results[1]['data']);
+
+      manufacturerList.value = List<Map<String, dynamic>>.from(
+        results[2]['data'],
       );
+    } catch (e) {
+      Get.snackbar("Error", e.toString());
     } finally {
-      isLoading.value = false;
+      isLoading(false);
     }
-  }
-
-  Future<void> addMachine(MachineModel model) async {
-    await api.post(ApiEndpoints.machines, model.toJson());
-    fetchMachines();
   }
 }

@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 
 class AppTextStyles {
-  static const title = TextStyle(
-    fontSize: 20,
-    fontWeight: FontWeight.bold,
-  );
+  static TextStyle title(BuildContext context) =>
+      Theme.of(context).textTheme.titleLarge!;
 
-  static const subtitle = TextStyle(
-    fontSize: 14,
-    color: Colors.grey,
-  );
+  static TextStyle subtitle(BuildContext context) =>
+      Theme.of(context).textTheme.bodyMedium!;
 }
