@@ -1,13 +1,14 @@
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import 'package:veloce_task_frontend/common_components/app_btn.dart';
-import 'package:veloce_task_frontend/common_components/info_card.dart';
 import 'package:veloce_task_frontend/common_components/info_row.dart';
-import 'package:veloce_task_frontend/common_components/machine_header_card.dart';
-import 'package:veloce_task_frontend/controllers/machine_detail_controller.dart';
 import 'package:veloce_task_frontend/controllers/machine_controller.dart';
-import 'package:veloce_task_frontend/core/utils/custom_loader.dart';
+import 'package:veloce_task_frontend/controllers/machine_detail_controller.dart';
 import 'package:veloce_task_frontend/core/theme/app_colors.dart';
+import 'package:veloce_task_frontend/core/theme/app_textstyles.dart';
+import 'package:veloce_task_frontend/core/utils/custom_loader.dart';
 import 'package:veloce_task_frontend/views/dashboard/machine/machine_edit_view.dart';
 
 class MachineDetailView extends StatefulWidget {
@@ -25,9 +26,7 @@ class _MachineDetailViewState extends State<MachineDetailView> {
   @override
   void initState() {
     super.initState();
-
     controller = Get.put(MachineDetailController());
-
     controller.fetchMachineById(widget.machineId);
   }
 
@@ -40,11 +39,12 @@ class _MachineDetailViewState extends State<MachineDetailView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.surface,
 
       appBar: AppBar(
         title: const Text("Machine Detail"),
         centerTitle: true,
+        elevation: 0,
         backgroundColor: AppColors.primary,
       ),
 
@@ -56,7 +56,12 @@ class _MachineDetailViewState extends State<MachineDetailView> {
         final machine = controller.machine.value;
 
         if (machine == null) {
-          return const Center(child: Text("No Data Found"));
+          return Center(
+            child: Text(
+              "No Data Found",
+              style: AppTextStyles.subtitle(context),
+            ),
+          );
         }
 
         final manufacturer = machine['manufacturerId'];
@@ -65,80 +70,77 @@ class _MachineDetailViewState extends State<MachineDetailView> {
         return SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              MachineHeaderCard(
-                name: machine['machineName'] ?? '-',
-                model: machine['model'] ?? '-',
-              ),
+              /// ================= HEADER =================
+              _headerCard(machine),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 18),
 
-              InfoCard(
-                children: [
-                  InfoRow(
-                    icon: Icons.confirmation_number,
-                    label: "Serial",
-                    value: machine['serialNumber'] ?? '-',
-                  ),
-                  InfoRow(
-                    icon: Icons.memory,
-                    label: "Model",
-                    value: machine['model'] ?? '-',
-                  ),
-                  InfoRow(
-                    icon: Icons.calendar_today,
-                    label: "Year",
-                    value: machine['year']?.toString() ?? '-',
-                  ),
-                ],
-              ),
+              /// ================= MACHINE DETAILS =================
+              _sectionTitle(context, "Machine Details"),
 
-              const SizedBox(height: 15),
+              const SizedBox(height: 10),
 
-              InfoCard(
-                children: [
-                  InfoRow(
-                    icon: Icons.factory,
-                    label: "Manufacturer",
-                    value: manufacturer != null
-                        ? manufacturer['name']
-                        : "Not Assigned",
-                  ),
-                  InfoRow(
-                    icon: Icons.location_on,
-                    label: "Location",
-                    value: location != null ? location['name'] : "Not Assigned",
-                  ),
-                ],
-              ),
+              _card([
+                InfoRow(
+                  label: "Serial Number",
+                  value: machine['serialNumber'] ?? '-',
+                ),
+                InfoRow(label: "Model", value: machine['model'] ?? '-'),
+                InfoRow(
+                  label: "Year",
+                  value: machine['year']?.toString() ?? '-',
+                ),
+              ]),
 
-              const SizedBox(height: 25),
+              const SizedBox(height: 16),
 
+              /// ================= ASSIGNMENT =================
+              _sectionTitle(context, "Assignment"),
+
+              const SizedBox(height: 10),
+
+              _card([
+                InfoRow(
+                  label: "Manufacturer",
+                  value: manufacturer != null
+                      ? manufacturer['name']
+                      : "Not Assigned",
+                ),
+                InfoRow(
+                  label: "Location",
+                  value: location != null ? location['name'] : "Not Assigned",
+                ),
+              ]),
+
+              const SizedBox(height: 24),
+
+              /// ================= ACTION BUTTONS =================
               Row(
                 children: [
                   Expanded(
                     child: AppButton(
                       text: "Edit",
-                      icon: Icons.edit,
                       onPressed: () {
                         Get.to(() => MachineEditView(machine: machine));
                       },
                     ),
                   ),
-
                   const SizedBox(width: 12),
-
                   Expanded(
                     child: AppButton(
                       text: "Delete",
-                      icon: Icons.delete,
-                      color: Colors.red,
+                      color: AppColors.error,
                       onPressed: () async {
                         final confirm = await Get.dialog(
                           AlertDialog(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                             title: const Text("Delete Machine"),
                             content: const Text(
-                              "Are you sure you want to delete this machine?",
+                              "This action cannot be undone.",
                             ),
                             actions: [
                               TextButton(
@@ -147,7 +149,10 @@ class _MachineDetailViewState extends State<MachineDetailView> {
                               ),
                               TextButton(
                                 onPressed: () => Get.back(result: true),
-                                child: const Text("Delete"),
+                                child: const Text(
+                                  "Delete",
+                                  style: TextStyle(color: Colors.red),
+                                ),
                               ),
                             ],
                           ),
@@ -158,13 +163,10 @@ class _MachineDetailViewState extends State<MachineDetailView> {
                               Get.find<MachineController>();
 
                           await masterController.deleteMachine(machine['_id']);
-
-                          Get.back(); // close detail page
+                          Get.back();
                         }
                       },
                     ),
-
-                    
                   ),
                 ],
               ),
@@ -172,6 +174,71 @@ class _MachineDetailViewState extends State<MachineDetailView> {
           ),
         );
       }),
+    );
+  }
+
+  // ================= HEADER CARD =================
+  Widget _headerCard(Map machine) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: AppColors.primaryLight,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.primary.withOpacity(0.15)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            machine['machineName'] ?? '-',
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: AppColors.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            "Model: ${machine['model'] ?? '-'}",
+            style: const TextStyle(
+              fontSize: 13,
+              color: AppColors.textSecondary,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ================= SECTION TITLE =================
+  Widget _sectionTitle(BuildContext context, String title) {
+    return Text(
+      title,
+      style: AppTextStyles.heading(context).copyWith(fontSize: 16),
+    );
+  }
+
+  // ================= CARD =================
+  Widget _card(List<Widget> children) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.grey.withOpacity(0.15)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(children: children),
     );
   }
 }
