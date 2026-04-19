@@ -87,6 +87,7 @@ class MachineController extends GetxController {
   }
 
   // ================= UPDATE MACHINE =================
+
   Future<Map<String, dynamic>?> updateMachine({
     required String id,
     required String machineName,
@@ -127,6 +128,7 @@ class MachineController extends GetxController {
         }
 
         Get.snackbar("Success", "Machine updated");
+
         return updatedMachine;
       }
 
@@ -140,22 +142,48 @@ class MachineController extends GetxController {
   }
 
   // ================= DELETE MACHINE =================
-  Future<void> deleteMachine(String id) async {
-    if (!await NetworkGuard.ensureInternet()) return;
+  //   Future<void> deleteMachine(String id) async {
+  //     if (!await NetworkGuard.ensureInternet()) return;
+
+  //     try {
+  //       isLoading(true);
+
+  //       final res = await api.delete("${ApiEndpoints.machines}/$id");
+
+  //       if (res['success'] == true) {
+  //         Get.snackbar("Success", "Machine deleted");
+  //         await fetchAllData();
+  //       }
+  //     } catch (e) {
+  //       Get.snackbar("Error", e.toString());
+  //     } finally {
+  //       isLoading(false);
+  //     }
+  //   }
+  // }
+  Future<bool> deleteMachine(String id) async {
+    if (!await NetworkGuard.ensureInternet()) return false;
 
     try {
-      isLoading(true);
+      isLoading.value = true;
 
       final res = await api.delete("${ApiEndpoints.machines}/$id");
 
-      if (res['success'] == true) {
-        Get.snackbar("Success", "Machine deleted");
-        await fetchAllData();
+      if (res != null && res['success'] == true) {
+        // ✅ Update list locally (faster than refetch)
+        machineList.removeWhere((m) => m['_id'] == id);
+        machineList.refresh();
+
+        return true; // ✅ success
       }
+
+      Get.snackbar("Error", res?['message'] ?? "Delete failed");
+      return false;
     } catch (e) {
       Get.snackbar("Error", e.toString());
+      return false;
     } finally {
-      isLoading(false);
+      isLoading.value = false;
     }
   }
 }
