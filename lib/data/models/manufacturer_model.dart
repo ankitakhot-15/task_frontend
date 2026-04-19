@@ -1,16 +1,18 @@
 class Manufacturer {
-  final String id;
-  final String name;
+  String? id;
+  String? name;
 
-  Manufacturer({
-    required this.id,
-    required this.name,
-  });
+  Manufacturer({this.id, this.name});
 
-  factory Manufacturer.fromJson(Map<String, dynamic> json) {
-    return Manufacturer(
-      id: json['_id'],
-      name: json['name'] ?? '',
-    );
+  Manufacturer.fromJson(Map<String, dynamic> json) {
+    id = json['_id'];
+    name = json['name'];
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "_id": id,
+      "name": name,
+    };
   }
 }

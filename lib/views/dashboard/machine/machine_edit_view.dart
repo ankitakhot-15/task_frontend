@@ -115,24 +115,6 @@ class _MachineEditViewState extends State<MachineEditView> {
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          // onPressed: () async {
-                          //   if (!_formKey.currentState!.validate()) return;
-
-                          //   final updated = await controller.updateMachine(
-                          //     id: machine['_id'],
-                          //     machineName: nameCtrl.text.trim(),
-                          //     serialNumber: serialCtrl.text.trim(),
-                          //     manufacturerId: selectedManufacturer!,
-                          //     model: modelCtrl.text.trim(),
-                          //     year: int.tryParse(yearCtrl.text) ?? 0,
-                          //     type: 1,
-                          //     locationId: selectedLocation!,
-                          //   );
-
-                          //   if (updated != null) {
-                          //     controller.machine.value = updated;
-                          //   }
-                          // },
                           onPressed: () async {
                             if (!_formKey.currentState!.validate()) return;
 
@@ -148,12 +130,6 @@ class _MachineEditViewState extends State<MachineEditView> {
                             );
 
                             if (updated != null) {
-                              // Get.snackbar(
-                              //   "Success",
-                              //   "Machine updated successfully",
-                              //   snackPosition: SnackPosition.BOTTOM,
-                              // );
-
                               Get.offAllNamed('/machine');
                             }
                           },

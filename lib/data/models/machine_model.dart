@@ -1,46 +1,42 @@
 class MachineModel {
-  final int? id;
-  final String machineName;
-  final String serialNumber;
-  final int manufacturerId;
-  final String model;
-  final int year;
-  final int type;
-  final int locationId;
+  bool? success;
+  int? total;
+  int? page;
+  int? limit;
+  List<Machine>? data;
 
   MachineModel({
-    this.id,
-    required this.machineName,
-    required this.serialNumber,
-    required this.manufacturerId,
-    required this.model,
-    required this.year,
-    required this.type,
-    required this.locationId,
+    this.success,
+    this.total,
+    this.page,
+    this.limit,
+    this.data,
   });
 
-  factory MachineModel.fromJson(Map<String, dynamic> json) {
-    return MachineModel(
-      id: json['id'],
-      machineName: json['machineName'],
-      serialNumber: json['machineSerialNumber'],
-      manufacturerId: json['machineManufacturerId'],
-      model: json['machineModel'],
-      year: json['yearOfManufacture'],
-      type: json['typeOfMachine'],
-      locationId: json['locationId'],
-    );
-  }
+  MachineModel.fromJson(Map<String, dynamic> json) {
+    success = json['success'];
+    total = json['total'];
+    page = json['page'];
+    limit = json['limit'];
 
-  Map<String, dynamic> toJson() {
-    return {
-      "machineName": machineName,
-      "machineSerialNumber": serialNumber,
-      "machineManufacturerId": manufacturerId,
-      "machineModel": model,
-      "yearOfManufacture": year,
-      "typeOfMachine": type,
-      "locationId": locationId,
-    };
+    data = (json['data'] as List?)
+        ?.map((e) => Machine.fromJson(e))
+        .toList();
+  }
+}
+
+class Machine {
+  String? id;
+  String? machineName;
+  String? serialNumber;
+  String? model;
+  int? year;
+
+  Machine.fromJson(Map<String, dynamic> json) {
+    id = json['_id'];
+    machineName = json['machineName'];
+    serialNumber = json['serialNumber'];
+    model = json['model'];
+    year = json['year'];
   }
 }

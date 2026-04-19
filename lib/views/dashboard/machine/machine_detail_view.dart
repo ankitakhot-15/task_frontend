@@ -138,95 +138,57 @@ class _MachineDetailViewState extends State<MachineDetailView> {
                     ),
                   ),
                   const SizedBox(width: 12),
-                  // Expanded(
-                  //   child: AppButton(
-                  //     text: "Delete",
-                  //     color: AppColors.error,
-                  //     onPressed: () async {
-                  //       final confirm = await Get.dialog(
-                  //         AlertDialog(
-                  //           shape: RoundedRectangleBorder(
-                  //             borderRadius: BorderRadius.circular(12),
-                  //           ),
-                  //           title: const Text("Delete Machine"),
-                  //           content: const Text(
-                  //             "This action cannot be undone.",
-                  //           ),
-                  //           actions: [
-                  //             TextButton(
-                  //               onPressed: () => Get.back(result: false),
-                  //               child: const Text("Cancel"),
-                  //             ),
-                  //             TextButton(
-                  //               onPressed: () => Get.back(result: true),
-                  //               child: const Text(
-                  //                 "Delete",
-                  //                 style: TextStyle(color: Colors.red),
-                  //               ),
-                  //             ),
-                  //           ],
-                  //         ),
-                  //       );
-
-                  //       if (confirm == true) {
-                  //         final masterController =
-                  //             Get.find<MachineController>();
-
-                  //         await masterController.deleteMachine(machine['_id']);
-                  //         Get.back();
-                  //       }
-                  //     },
-                  //   ),
-                  // ),
 
                   Expanded(
-  child: AppButton(
-    text: "Delete",
-    color: AppColors.error,
-    onPressed: () async {
-      final confirm = await Get.dialog(
-        AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          title: const Text("Delete Machine"),
-          content: const Text("This action cannot be undone."),
-          actions: [
-            TextButton(
-              onPressed: () => Get.back(result: false),
-              child: const Text("Cancel"),
-            ),
-            TextButton(
-              onPressed: () => Get.back(result: true),
-              child: const Text(
-                "Delete",
-                style: TextStyle(color: Colors.red),
-              ),
-            ),
-          ],
-        ),
-      );
+                    child: AppButton(
+                      text: "Delete",
+                      color: AppColors.error,
+                      onPressed: () async {
+                        final confirm = await Get.dialog(
+                          AlertDialog(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            title: const Text("Delete Machine"),
+                            content: const Text(
+                              "This action cannot be undone.",
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Get.back(result: false),
+                                child: const Text("Cancel"),
+                              ),
+                              TextButton(
+                                onPressed: () => Get.back(result: true),
+                                child: const Text(
+                                  "Delete",
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
 
-      if (confirm == true) {
-        final controller = Get.find<MachineController>();
+                        if (confirm == true) {
+                          final controller = Get.find<MachineController>();
 
-        final success =
-            await controller.deleteMachine(machine['_id']);
+                          final success = await controller.deleteMachine(
+                            machine['_id'],
+                          );
 
-        if (success) {
-          Get.snackbar(
-            "Success",
-            "Machine deleted successfully",
-            snackPosition: SnackPosition.BOTTOM,
-          );
+                          if (success) {
+                            Get.snackbar(
+                              "Success",
+                              "Machine deleted successfully",
+                              snackPosition: SnackPosition.BOTTOM,
+                            );
 
-          // 👇 Navigate directly to Master screen
-          Get.offAllNamed(AppRoutes.machine);
-        }
-      }
-    },
-  ),
-)
+                            Get.offAllNamed(AppRoutes.machine);
+                          }
+                        }
+                      },
+                    ),
+                  ),
                 ],
               ),
             ],

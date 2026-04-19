@@ -1,33 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import 'package:veloce_task_frontend/controllers/operation_controller.dart';
-import 'package:veloce_task_frontend/core/utils/custom_loader.dart';
 import 'package:veloce_task_frontend/core/theme/app_colors.dart';
+import 'package:veloce_task_frontend/core/utils/custom_loader.dart';
+import 'package:veloce_task_frontend/routes/app_routes.dart';
 
 class OperationMasterView extends StatelessWidget {
   OperationMasterView({super.key});
 
-  final OperationController controller = Get.put(OperationController());
+  final OperationController controller = Get.find<OperationController>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
 
-      // 🔷 AppBar
+      // ================= APP BAR =================
       appBar: AppBar(
         title: const Text("Operation Master"),
         centerTitle: true,
         backgroundColor: AppColors.primary,
       ),
 
-      // 🔷 Body
+      // ================= BODY =================
       body: Obx(() {
         if (controller.isLoading.value) {
           return const CustomLoader();
         }
 
-        if (controller.operationList.isEmpty) {
+        if (controller.operations.isEmpty) {
           return const Center(child: Text("No Operations Found"));
         }
 
@@ -35,7 +37,7 @@ class OperationMasterView extends StatelessWidget {
           padding: const EdgeInsets.all(12),
           child: Column(
             children: [
-              // 🔷 Header
+              // ================= HEADER =================
               Container(
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 decoration: BoxDecoration(
@@ -47,7 +49,15 @@ class OperationMasterView extends StatelessWidget {
                     Expanded(
                       child: Center(
                         child: Text(
-                          "Operation Name",
+                          "Operation",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Center(
+                        child: Text(
+                          "Machine",
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),
@@ -66,18 +76,83 @@ class OperationMasterView extends StatelessWidget {
 
               const SizedBox(height: 12),
 
-              // 🔷 List
+              // ================= LIST =================
               Expanded(
                 child: ListView.builder(
-                  itemCount: controller.operationList.length,
+                  itemCount: controller.operations.length,
                   itemBuilder: (context, index) {
-                    final item = controller.operationList[index];
+                    final item = controller.operations[index];
 
+                    // return Container(
+                    //   margin: const EdgeInsets.only(bottom: 10),
+                    //   padding: const EdgeInsets.symmetric(
+                    //     vertical: 14,
+                    //     horizontal: 10,
+                    //   ),
+                    //   decoration: BoxDecoration(
+                    //     color: index.isEven
+                    //         ? AppColors.background
+                    //         : AppColors.primary.withOpacity(0.05),
+                    //     borderRadius: BorderRadius.circular(12),
+                    //     border: Border.all(
+                    //       color: AppColors.grey.withOpacity(0.2),
+                    //     ),
+                    //     boxShadow: [
+                    //       BoxShadow(
+                    //         color: Colors.black.withOpacity(0.05),
+                    //         blurRadius: 6,
+                    //       ),
+                    //     ],
+                    //   ),
+
+                    //   child: Row(
+                    //     children: [
+                    //       // ================= OPERATION NAME =================
+                    //       Expanded(
+                    //         child: Center(
+                    //           child: Text(
+                    //             item.operationName ?? "-",
+                    //             textAlign: TextAlign.center,
+                    //             style: const TextStyle(
+                    //               fontWeight: FontWeight.w600,
+                    //             ),
+                    //           ),
+                    //         ),
+                    //       ),
+
+                    //       // ================= MACHINE NAME =================
+                    //       Expanded(
+                    //         child: Center(
+                    //           child: Text(
+                    //             item.machineId ?? "-",
+                    //             textAlign: TextAlign.center,
+                    //             style: const TextStyle(color: Colors.black87),
+                    //           ),
+                    //         ),
+                    //       ),
+
+                    //       // ================= TYPE =================
+                    //       Expanded(
+                    //         child: Center(
+                    //           child: Text(
+                    //             item.operationType?.toString() ?? "-",
+                    //             textAlign: TextAlign.center,
+                    //             style: TextStyle(
+                    //               color: AppColors.primary,
+                    //               fontWeight: FontWeight.w600,
+                    //             ),
+                    //           ),
+                    //         ),
+                    //       ),
+                    //     ],
+                    //   ),
+                    // );
                     return InkWell(
-                      borderRadius: BorderRadius.circular(12),
                       onTap: () {
-                        // 👉 Navigate to detail screen (later)
-                        // Get.toNamed(AppRoutes.operationDetail, arguments: item['_id']);
+                        Get.toNamed(
+                          AppRoutes.operationDetail,
+                          arguments: item.id,
+                        );
                       },
                       child: Container(
                         margin: const EdgeInsets.only(bottom: 10),
@@ -86,7 +161,7 @@ class OperationMasterView extends StatelessWidget {
                           horizontal: 10,
                         ),
                         decoration: BoxDecoration(
-                          color: index % 2 == 0
+                          color: index.isEven
                               ? AppColors.background
                               : AppColors.primary.withOpacity(0.05),
                           borderRadius: BorderRadius.circular(12),
@@ -100,25 +175,42 @@ class OperationMasterView extends StatelessWidget {
                             ),
                           ],
                         ),
+
                         child: Row(
                           children: [
+                            // OPERATION NAME
                             Expanded(
                               child: Center(
                                 child: Text(
-                                  item['name'] ?? '-',
+                                  item.operationName ?? "-",
+                                  textAlign: TextAlign.center,
                                   style: const TextStyle(
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
                               ),
                             ),
+
+                            // MACHINE (FIXED)
                             Expanded(
                               child: Center(
                                 child: Text(
-                                  item['type']?.toString() ?? '-',
+                                  item.machineId ?? "-",
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(color: Colors.black87),
+                                ),
+                              ),
+                            ),
+
+                            // TYPE
+                            Expanded(
+                              child: Center(
+                                child: Text(
+                                  item.operationType?.toString() ?? "-",
+                                  textAlign: TextAlign.center,
                                   style: TextStyle(
-                                    color:
-                                        AppColors.primary.withOpacity(0.8),
+                                    color: AppColors.primary,
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
                               ),
@@ -135,13 +227,18 @@ class OperationMasterView extends StatelessWidget {
         );
       }),
 
-      // 🔷 Floating Button (Add Operation)
+      // ================= FLOATING BUTTON =================
       floatingActionButton: FloatingActionButton(
         backgroundColor: AppColors.primary,
         onPressed: () {
-          // 👉 Open Add Operation Dialog / Screen
+          final ctrl = Get.find<OperationController>();
+
+          ctrl.clearForm();
+
+          Get.toNamed(AppRoutes.operationForm,
+          );
         },
-        child: const Icon(Icons.add),
+        child: const Icon(Icons.add, color: AppColors.background),
       ),
     );
   }
