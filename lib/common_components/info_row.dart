@@ -15,7 +15,6 @@ class InfoRow extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // LABEL
           Expanded(
             flex: 4,
             child: Text(
@@ -27,7 +26,6 @@ class InfoRow extends StatelessWidget {
             ),
           ),
 
-          // VALUE
           Expanded(
             flex: 6,
             child: Text(

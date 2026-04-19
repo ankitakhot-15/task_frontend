@@ -36,7 +36,6 @@ class OperationDetailView extends StatelessWidget {
             onPressed: () async {
               await controller.deleteOperation(id);
 
-              // go back to master screen
               Get.offAllNamed(AppRoutes.operation);
             },
           ),

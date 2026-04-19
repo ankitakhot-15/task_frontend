@@ -5,7 +5,7 @@ class CustomLoader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = Colors.indigo.shade600; // 🔥 professional color
+    final color = Colors.indigo.shade600;
 
     return Center(
       child: Container(
@@ -21,7 +21,7 @@ class CustomLoader extends StatelessWidget {
           child: Stack(
             alignment: Alignment.center,
             children: [
-              // 🔄 Circular Loader
+             
               SizedBox(
                 height: 70,
                 width: 70,
@@ -31,7 +31,6 @@ class CustomLoader extends StatelessWidget {
                 ),
               ),
 
-              // 📝 Text inside circle
               Text(
                 "Please\nWait",
                 textAlign: TextAlign.center,

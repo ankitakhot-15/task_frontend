@@ -21,7 +21,6 @@ class MachineHeaderCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // MACHINE NAME
           Text(
             name,
             maxLines: 2,
@@ -34,8 +33,6 @@ class MachineHeaderCard extends StatelessWidget {
           ),
 
           const SizedBox(height: 6),
-
-          // MODEL
           Text(
             "Model: $model",
             style: const TextStyle(

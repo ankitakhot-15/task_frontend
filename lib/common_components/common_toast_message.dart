@@ -40,7 +40,6 @@ class AppToast {
     required Color background,
     required IconData icon,
   }) {
-    // close previous toast (avoid stacking)
     Get.closeAllSnackbars();
 
     Get.snackbar(
@@ -55,7 +54,6 @@ class AppToast {
       isDismissible: true,
       icon: Icon(icon, color: Colors.white),
 
-      // remove default title/message UI
       titleText: const SizedBox.shrink(),
 
       messageText: Text(

@@ -133,7 +133,7 @@ class _MachineDetailViewState extends State<MachineDetailView> {
 
                         if (result != null) {
                           controller.machine.value =
-                              result; // 🔥 instant update
+                              result;
                         }
                       },
                     ),

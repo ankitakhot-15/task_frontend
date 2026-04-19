@@ -68,7 +68,6 @@ class Component {
       partNo: json['partNo'],
       ecn: json['ecn'],
 
-      // ✅ API gives customerId object
       customer: json['customerId'] != null
           ? Customer.fromJson(json['customerId'])
           : null,
@@ -85,7 +84,6 @@ class Component {
       "partNo": partNo,
       "ecn": ecn,
 
-      // ✅ IMPORTANT: send only ID to backend
       "customerId": customer?.id,
     };
   }
