@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:veloce_task_frontend/common_components/common_toast_message.dart';
 import 'package:veloce_task_frontend/core/network/NetworkGuard%20.dart';
 import '../core/api/api_service.dart';
 import '../core/api/api_endpoints.dart';
@@ -41,7 +42,7 @@ class MachineController extends GetxController {
         results[2]['data'],
       );
     } catch (e) {
-      Get.snackbar("Error", e.toString());
+      AppToast.error(e.toString());
     } finally {
       isLoading(false);
     }
@@ -127,14 +128,14 @@ class MachineController extends GetxController {
           machineList.refresh();
         }
 
-        Get.snackbar("Success", "Machine updated");
+        AppToast.success("Machine updated");
 
         return updatedMachine;
       }
 
       return null;
     } catch (e) {
-      Get.snackbar("Error", e.toString());
+      AppToast.error(e.toString());
       return null;
     } finally {
       isLoading(false);
@@ -158,10 +159,10 @@ class MachineController extends GetxController {
         return true;
       }
 
-      Get.snackbar("Error", res?['message'] ?? "Delete failed");
+      AppToast.error(res?['message'] ?? "Delete failed");
       return false;
     } catch (e) {
-      Get.snackbar("Error", e.toString());
+      AppToast.error(e.toString());
       return false;
     } finally {
       isLoading.value = false;

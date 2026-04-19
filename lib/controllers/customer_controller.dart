@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:veloce_task_frontend/common_components/common_toast_message.dart';
 import 'package:veloce_task_frontend/core/api/api_endpoints.dart';
 import 'package:veloce_task_frontend/core/api/api_service.dart';
 import 'package:veloce_task_frontend/data/models/customer_model.dart';
@@ -23,7 +24,7 @@ class CustomerController extends GetxController {
       isLoading(true);
       return await apiCall();
     } catch (e) {
-      Get.snackbar("Error", e.toString());
+      AppToast.error(e.toString());
       return null;
     } finally {
       isLoading(false);
@@ -55,7 +56,7 @@ class CustomerController extends GetxController {
     });
 
     await fetchCustomers();
-    Get.snackbar("Success", "Customer added successfully");
+    AppToast.success("Customer added successfully");
   }
 
   // =========================
@@ -69,7 +70,7 @@ class CustomerController extends GetxController {
     });
 
     await fetchCustomers();
-    Get.snackbar("Success", "Customer updated successfully");
+    AppToast.success( "Customer updated successfully");
   }
 
   // =========================
@@ -81,6 +82,6 @@ class CustomerController extends GetxController {
     });
 
     customers.removeWhere((c) => c.id == id);
-    Get.snackbar("Success", "Customer deleted");
+    AppToast.success("Customer deleted");
   }
 }

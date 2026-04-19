@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:veloce_task_frontend/common_components/common_toast_message.dart';
 import 'package:veloce_task_frontend/core/api/api_endpoints.dart';
 import 'package:veloce_task_frontend/core/api/api_service.dart';
 import 'package:veloce_task_frontend/data/models/component_model.dart';
@@ -16,35 +17,36 @@ class ComponentController extends GetxController {
 
   @override
   void onInit() {
-    fetchAll();
+    fetchAllComponents();
     super.onInit();
   }
 
   // =========================
   // 🔹 FETCH ALL DATA
   // =========================
-  Future<void> fetchAll() async {
+
+  Future<void> fetchAllComponents() async {
     try {
       isLoading(true);
 
       final componentRes = await api.get(ApiEndpoints.components);
       final customerRes = await api.get(ApiEndpoints.customers);
 
-      components.value =
-          ComponentModel.fromJson(componentRes).data ?? [];
+      final componentList = ComponentModel.fromJson(componentRes).data ?? [];
 
-      customers.value =
-          CustomerModel.fromJson(customerRes).data ?? [];
+      final customerList = CustomerModel.fromJson(customerRes).data ?? [];
 
+      components.assignAll(componentList);
+      customers.assignAll(customerList);
     } catch (e) {
-      Get.snackbar("Error", "Failed to load data");
+      AppToast.error("Failed to load data");
     } finally {
       isLoading(false);
     }
   }
 
   // =========================
-  // 🔹 CREATE COMPONENT
+  //  CREATE COMPONENT
   // =========================
   Future<void> addComponent({
     required String name,
@@ -63,40 +65,35 @@ class ComponentController extends GetxController {
 
       await api.post(ApiEndpoints.components, body);
 
-      await fetchAll();
+      await fetchAllComponents();
 
-      Get.snackbar("Success", "Component added");
+      AppToast.success("Component added successfully");
     } catch (e) {
-      Get.snackbar("Error", "Failed to add component");
+      AppToast.error("Failed to add component");
     } finally {
       isLoading(false);
     }
   }
 
   // =========================
-  // 🔹 UPDATE COMPONENT
+  //  UPDATE COMPONENT
   // =========================
-  Future<void> updateComponent(
-  String id,
-  Map<String, dynamic> data,
-) async {
-  try {
-    isLoading(true);
+  Future<void> updateComponent(String id, Map<String, dynamic> data) async {
+    try {
+      isLoading(true);
 
-    await api.put(
-      "${ApiEndpoints.components}/$id",
-      data,
-    );
+      await api.put("${ApiEndpoints.components}/$id", data);
 
-    await fetchAll();
+      await fetchAllComponents();
 
-    Get.snackbar("Success", "Component updated");
-  } catch (e) {
-    Get.snackbar("Error", "Update failed");
-  } finally {
-    isLoading(false);
+      AppToast.success("Component updated");
+    } catch (e) {
+      AppToast.error("Update failed");
+    } finally {
+      isLoading(false);
+    }
   }
-}
+
   // =========================
   // 🔹 DELETE COMPONENT
   // =========================
@@ -108,9 +105,9 @@ class ComponentController extends GetxController {
 
       components.removeWhere((c) => c.id == id);
 
-      Get.snackbar("Success", "Component deleted");
+      AppToast.success("Component deleted");
     } catch (e) {
-      Get.snackbar("Error", "Delete failed");
+      AppToast.error("Delete failed");
     } finally {
       isLoading(false);
     }

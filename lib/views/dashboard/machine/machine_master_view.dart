@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:veloce_task_frontend/common_components/common_toast_message.dart';
 import 'package:veloce_task_frontend/controllers/machine_controller.dart';
 import 'package:veloce_task_frontend/core/utils/custom_loader.dart';
 import 'package:veloce_task_frontend/views/dashboard/machine/machine_create_view.dart';
@@ -151,11 +152,7 @@ class MachineMasterView extends StatelessWidget {
 
             controller.machineList.refresh();
 
-            Get.snackbar(
-              "Success",
-              "Machine added to list",
-              snackPosition: SnackPosition.BOTTOM,
-            );
+            AppToast.success("Machine added to list");
           }
         },
       ),

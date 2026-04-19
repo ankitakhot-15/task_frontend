@@ -1,4 +1,4 @@
-import 'package:get/get.dart';
+import 'package:veloce_task_frontend/common_components/common_toast_message.dart';
 import 'network_checker.dart';
 
 class NetworkGuard {
@@ -6,11 +6,7 @@ class NetworkGuard {
     final connected = await NetworkChecker.isConnected();
 
     if (!connected) {
-      Get.snackbar(
-        "No Internet",
-        "Please check your internet connection",
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      AppToast.info("No Internet", "Please check your internet connection");
       return false;
     }
 

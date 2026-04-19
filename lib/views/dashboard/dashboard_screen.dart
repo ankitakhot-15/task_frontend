@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:veloce_task_frontend/core/theme/app_colors.dart';
 import 'package:veloce_task_frontend/core/theme/app_textstyles.dart';
-import 'package:veloce_task_frontend/data/models/customer_model.dart';
 import 'package:veloce_task_frontend/views/dashboard/component/component_master_view.dart';
 import 'package:veloce_task_frontend/views/dashboard/machine/machine_master_view.dart';
 import 'package:veloce_task_frontend/views/dashboard/operation/operation_master_view.dart';

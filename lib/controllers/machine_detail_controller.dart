@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:veloce_task_frontend/common_components/common_toast_message.dart';
 import '../core/api/api_service.dart';
 import '../core/api/api_endpoints.dart';
 
@@ -35,7 +36,7 @@ class MachineDetailController extends GetxController {
 
       selectedLocation.value = machine.value?['locationId']?['_id'];
     } catch (e) {
-      Get.snackbar("Error", e.toString());
+      AppToast.error(e.toString());
     } finally {
       isLoading(false);
     }

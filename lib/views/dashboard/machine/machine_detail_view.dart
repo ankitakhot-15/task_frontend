@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'package:veloce_task_frontend/common_components/app_btn.dart';
+import 'package:veloce_task_frontend/common_components/common_toast_message.dart';
 import 'package:veloce_task_frontend/common_components/info_row.dart';
 import 'package:veloce_task_frontend/controllers/machine_controller.dart';
 import 'package:veloce_task_frontend/controllers/machine_detail_controller.dart';
@@ -177,11 +178,7 @@ class _MachineDetailViewState extends State<MachineDetailView> {
                           );
 
                           if (success) {
-                            Get.snackbar(
-                              "Success",
-                              "Machine deleted successfully",
-                              snackPosition: SnackPosition.BOTTOM,
-                            );
+                            AppToast.success("Machine deleted successfully");
 
                             Get.offAllNamed(AppRoutes.machine);
                           }

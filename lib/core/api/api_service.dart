@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:http/http.dart' as http;
+import 'package:veloce_task_frontend/common_components/common_toast_message.dart';
 
 class ApiService {
   static const Duration _timeout = Duration(seconds: 30);
@@ -129,7 +130,7 @@ class ApiService {
 
       case 400:
         final message = body is Map ? body["message"] : "Bad Request";
-        Get.snackbar("Alert", message);
+        AppToast.info("Alert", message);
         throw Exception(message);
 
       case 401:

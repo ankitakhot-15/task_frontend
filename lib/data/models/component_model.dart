@@ -15,17 +15,18 @@ class ComponentModel {
     this.data,
   });
 
-  ComponentModel.fromJson(Map<String, dynamic> json) {
-    success = json['success'];
-    total = json['total'];
-    page = json['page'];
-    limit = json['limit'];
-
-    if (json['data'] != null) {
-      data = List<Component>.from(
-        json['data'].map((x) => Component.fromJson(x)),
-      );
-    }
+  factory ComponentModel.fromJson(Map<String, dynamic> json) {
+    return ComponentModel(
+      success: json['success'],
+      total: json['total'],
+      page: json['page'],
+      limit: json['limit'],
+      data: json['data'] == null
+          ? []
+          : List<Component>.from(
+              json['data'].map((x) => Component.fromJson(x)),
+            ),
+    );
   }
 
   Map<String, dynamic> toJson() {
@@ -38,12 +39,15 @@ class ComponentModel {
     };
   }
 }
+
 class Component {
   String? id;
   String? componentName;
   String? partNo;
   String? ecn;
+
   Customer? customer;
+
   String? createdAt;
   String? updatedAt;
 
@@ -57,16 +61,21 @@ class Component {
     this.updatedAt,
   });
 
-  Component.fromJson(Map<String, dynamic> json) {
-    id = json['_id'];
-    componentName = json['componentName'];
-    partNo = json['partNo'];
-    ecn = json['ecn'];
-    customer = json['customerId'] != null
-        ? Customer.fromJson(json['customerId'])
-        : null;
-    createdAt = json['createdAt'];
-    updatedAt = json['updatedAt'];
+  factory Component.fromJson(Map<String, dynamic> json) {
+    return Component(
+      id: json['_id']?.toString(),
+      componentName: json['componentName'],
+      partNo: json['partNo'],
+      ecn: json['ecn'],
+
+      // ✅ API gives customerId object
+      customer: json['customerId'] != null
+          ? Customer.fromJson(json['customerId'])
+          : null,
+
+      createdAt: json['createdAt'],
+      updatedAt: json['updatedAt'],
+    );
   }
 
   Map<String, dynamic> toJson() {
@@ -75,9 +84,9 @@ class Component {
       "componentName": componentName,
       "partNo": partNo,
       "ecn": ecn,
-      "customerId": customer?.toJson(),
-      "createdAt": createdAt,
-      "updatedAt": updatedAt,
+
+      // ✅ IMPORTANT: send only ID to backend
+      "customerId": customer?.id,
     };
   }
 }
