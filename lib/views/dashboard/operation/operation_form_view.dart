@@ -180,25 +180,23 @@ class _OperationFormViewState extends State<OperationFormView> {
               const SizedBox(height: 20),
 
               // ================= SAVE =================
-              Expanded(
-                child: SizedBox(
-                  width: double.infinity,
-                  child: AppButton(
-                    text: "Save Operation",
-                    isLoading: controller.isLoading.value,
-                    onPressed: () async {
-                      await controller.saveOperation(
-                        code: codeCtrl.text.trim(),
-                        name: nameCtrl.text.trim(),
-                        description: descCtrl.text.trim(),
-                        type: 1,
-                      );
+              SizedBox(
+                width: double.infinity,
+                child: AppButton(
+                  text: "Save Operation",
+                  isLoading: controller.isLoading.value,
+                  onPressed: () async {
+                    await controller.saveOperation(
+                      code: codeCtrl.text.trim(),
+                      name: nameCtrl.text.trim(),
+                      description: descCtrl.text.trim(),
+                      type: 1,
+                    );
 
-                      if (!controller.isLoading.value) {
-                        Get.back();
-                      }
-                    },
-                  ),
+                    if (!controller.isLoading.value) {
+                      Get.back();
+                    }
+                  },
                 ),
               ),
             ],
