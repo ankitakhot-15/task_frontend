@@ -110,7 +110,7 @@ class _ComponentAddViewState extends State<ComponentAddView> {
                           border: Border.all(color: Colors.grey.shade300),
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
                         child: DropdownButtonHideUnderline(
                           child: DropdownButtonFormField<String>(
                             value:
