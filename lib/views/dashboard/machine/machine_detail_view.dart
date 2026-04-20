@@ -44,6 +44,8 @@ class _MachineDetailViewState extends State<MachineDetailView> {
 
       appBar: AppBar(
         title: const Text("Machine Detail"),
+        leading: BackButton(),
+
         centerTitle: true,
         elevation: 0,
         backgroundColor: AppColors.primary,
@@ -86,6 +88,7 @@ class _MachineDetailViewState extends State<MachineDetailView> {
               _card([
                 InfoRow(
                   label: "Serial Number",
+                  
                   value: machine['serialNumber'] ?? '-',
                 ),
                 InfoRow(label: "Model", value: machine['model'] ?? '-'),
@@ -132,8 +135,7 @@ class _MachineDetailViewState extends State<MachineDetailView> {
                         );
 
                         if (result != null) {
-                          controller.machine.value =
-                              result;
+                          controller.machine.value = result;
                         }
                       },
                     ),

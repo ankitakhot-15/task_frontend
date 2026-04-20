@@ -6,9 +6,9 @@ import 'package:veloce_task_frontend/controllers/operation_controller.dart';
 class InitialBinding extends Bindings {
   @override
   void dependencies() {
-    // ================= CORE CONTROLLERS =================
-    Get.put(OperationController(), permanent: true);
-    Get.put(MachineController(), permanent: true);
-    Get.put(ComponentController(), permanent: true);
+    // ================= LAZY LOAD CONTROLLERS =================
+    Get.lazyPut<OperationController>(() => OperationController());
+    Get.lazyPut<MachineController>(() => MachineController());
+    Get.lazyPut<ComponentController>(() => ComponentController());
   }
 }

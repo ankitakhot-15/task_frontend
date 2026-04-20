@@ -1,15 +1,53 @@
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:veloce_task_frontend/common_components/app_back_btn.dart';
+import 'package:veloce_task_frontend/common_components/app_btn.dart';
 
 import 'package:veloce_task_frontend/controllers/operation_controller.dart';
 import 'package:veloce_task_frontend/core/theme/app_colors.dart';
 import 'package:veloce_task_frontend/core/utils/custom_loader.dart';
 import 'package:veloce_task_frontend/routes/app_routes.dart';
 
-class OperationMasterView extends StatelessWidget {
-  OperationMasterView({super.key});
+class OperationMasterView extends StatefulWidget {
+  const OperationMasterView({super.key});
 
-  final OperationController controller = Get.find<OperationController>();
+  @override
+  State<OperationMasterView> createState() => _OperationMasterViewState();
+}
+
+class _OperationMasterViewState extends State<OperationMasterView> {
+  final OperationController controller = Get.put(OperationController());
+
+  // ================= PAGINATION =================
+  int currentPage = 0;
+  final int pageSize = 10;
+
+  List get paginatedList {
+    final list = controller.operations;
+
+    final start = currentPage * pageSize;
+    if (start >= list.length) return [];
+
+    final end = (start + pageSize > list.length)
+        ? list.length
+        : start + pageSize;
+
+    return list.sublist(start, end);
+  }
+
+  bool get hasNext =>
+      (currentPage + 1) * pageSize < controller.operations.length;
+
+  bool get hasPrev => currentPage > 0;
+
+  void nextPage() {
+    if (hasNext) setState(() => currentPage++);
+  }
+
+  void prevPage() {
+    if (hasPrev) setState(() => currentPage--);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +57,12 @@ class OperationMasterView extends StatelessWidget {
       // ================= APP BAR =================
       appBar: AppBar(
         title: const Text("Operation Master"),
+        // leading: AppBackButton(),
+        leading: AppBackButton(
+          onTap: () {
+            Get.offAllNamed(AppRoutes.dashboard);
+          },
+        ),
         centerTitle: true,
         backgroundColor: AppColors.primary,
       ),
@@ -76,12 +120,12 @@ class OperationMasterView extends StatelessWidget {
 
               const SizedBox(height: 12),
 
-              // ================= LIST =================
+              // ================= LIST (PAGINATED) =================
               Expanded(
                 child: ListView.builder(
-                  itemCount: controller.operations.length,
+                  itemCount: paginatedList.length,
                   itemBuilder: (context, index) {
-                    final item = controller.operations[index];
+                    final item = paginatedList[index];
 
                     return InkWell(
                       onTap: () {
@@ -104,12 +148,6 @@ class OperationMasterView extends StatelessWidget {
                           border: Border.all(
                             color: AppColors.grey.withOpacity(0.2),
                           ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.05),
-                              blurRadius: 6,
-                            ),
-                          ],
                         ),
 
                         child: Row(
@@ -118,7 +156,6 @@ class OperationMasterView extends StatelessWidget {
                               child: Center(
                                 child: Text(
                                   item.operationName ?? "-",
-                                  textAlign: TextAlign.center,
                                   style: const TextStyle(
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -126,23 +163,16 @@ class OperationMasterView extends StatelessWidget {
                               ),
                             ),
 
-                          
                             Expanded(
                               child: Center(
-                                child: Text(
-                                  item.machineName ?? "-",
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(color: Colors.black87),
-                                ),
+                                child: Text(item.machineName ?? "-"),
                               ),
                             ),
 
-                            
                             Expanded(
                               child: Center(
                                 child: Text(
                                   item.operationType?.toString() ?? "-",
-                                  textAlign: TextAlign.center,
                                   style: TextStyle(
                                     color: AppColors.primary,
                                     fontWeight: FontWeight.w600,
@@ -157,6 +187,41 @@ class OperationMasterView extends StatelessWidget {
                   },
                 ),
               ),
+
+              // ================= PAGINATION BUTTONS =================
+              Padding(
+                padding: const EdgeInsets.only(bottom: 70), // FAB safe space
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: AppButton(
+                        text: "Prev",
+                        icon: Icons.arrow_back,
+                        isLoading: false,
+                        onPressed: hasPrev ? prevPage : null,
+                      ),
+                    ),
+
+                    const SizedBox(width: 10),
+
+                    Text(
+                      "Page ${currentPage + 1}",
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+
+                    const SizedBox(width: 10),
+
+                    Expanded(
+                      child: AppButton(
+                        text: "Next",
+                        icon: Icons.arrow_forward,
+                        isLoading: false,
+                        onPressed: hasNext ? nextPage : null,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         );
@@ -167,9 +232,7 @@ class OperationMasterView extends StatelessWidget {
         backgroundColor: AppColors.primary,
         onPressed: () {
           final ctrl = Get.find<OperationController>();
-
           ctrl.clearForm();
-
           Get.toNamed(AppRoutes.operationForm);
         },
         child: const Icon(Icons.add, color: AppColors.background),

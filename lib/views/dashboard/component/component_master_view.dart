@@ -1,16 +1,54 @@
 
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:veloce_task_frontend/common_components/app_back_btn.dart';
+import 'package:veloce_task_frontend/common_components/app_btn.dart';
 import 'package:veloce_task_frontend/controllers/component_controller.dart';
 import 'package:veloce_task_frontend/core/theme/app_colors.dart';
 import 'package:veloce_task_frontend/core/utils/custom_loader.dart';
 import 'package:veloce_task_frontend/data/models/component_model.dart';
 import 'package:veloce_task_frontend/routes/app_routes.dart';
 
-class ComponentMasterView extends StatelessWidget {
-  ComponentMasterView({super.key});
+class ComponentMasterView extends StatefulWidget {
+  const ComponentMasterView({super.key});
 
-  final ComponentController controller = Get.find<ComponentController>();
+  @override
+  State<ComponentMasterView> createState() => _ComponentMasterViewState();
+}
+
+class _ComponentMasterViewState extends State<ComponentMasterView> {
+  final ComponentController controller = Get.put(ComponentController());
+
+  // ================= PAGINATION =================
+  int currentPage = 0;
+  final int pageSize = 10;
+
+  List<Component> get paginatedList {
+    final list = controller.components;
+
+    final start = currentPage * pageSize;
+    if (start >= list.length) return [];
+
+    final end = (start + pageSize > list.length)
+        ? list.length
+        : start + pageSize;
+
+    return list.sublist(start, end);
+  }
+
+  bool get hasNext =>
+      (currentPage + 1) * pageSize < controller.components.length;
+
+  bool get hasPrev => currentPage > 0;
+
+  void nextPage() {
+    if (hasNext) setState(() => currentPage++);
+  }
+
+  void prevPage() {
+    if (hasPrev) setState(() => currentPage--);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,11 +58,16 @@ class ComponentMasterView extends StatelessWidget {
       // ================= APP BAR =================
       appBar: AppBar(
         title: const Text("Component Master"),
+        leading: AppBackButton(
+          onTap: () {
+            Get.offAllNamed(AppRoutes.dashboard);
+          },
+        ),
         centerTitle: true,
         backgroundColor: AppColors.primary,
       ),
 
-      // ================= FAB =================
+      // ================= FAB (UNCHANGED) =================
       floatingActionButton: FloatingActionButton(
         backgroundColor: AppColors.primary,
         onPressed: () {
@@ -43,34 +86,75 @@ class ComponentMasterView extends StatelessWidget {
           return const Center(child: Text("No Components Found"));
         }
 
-        return ListView.separated(
+        return Padding(
           padding: const EdgeInsets.all(12),
-          itemCount: controller.components.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 10),
+          child: Column(
+            children: [
+              // ================= LIST =================
+              Expanded(
+                child: ListView.separated(
+                  padding: const EdgeInsets.only(bottom: 80),
+                  itemCount: paginatedList.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 10),
 
-          itemBuilder: (context, index) {
-            final Component item = controller.components[index];
+                  itemBuilder: (context, index) {
+                    final Component item = paginatedList[index];
 
-            return InkWell(
-              borderRadius: BorderRadius.circular(16),
+                    return InkWell(
+                      borderRadius: BorderRadius.circular(16),
 
-              // ================= DETAIL NAVIGATION =================
-              onTap: () {
-                Get.toNamed(
-                  AppRoutes.componentDetail,
-                  arguments: item.id,
-                );
-              },
+                      onTap: () {
+                        Get.toNamed(
+                          AppRoutes.componentDetail,
+                          arguments: item.id,
+                        );
+                      },
 
-              child: _componentCard(item),
-            );
-          },
+                      child: _componentCard(item),
+                    );
+                  },
+                ),
+              ),
+
+              // ================= PAGINATION =================
+              Row(
+                children: [
+                  Expanded(
+                    child: AppButton(
+                      text: "Prev",
+                      icon: Icons.arrow_back,
+                      isLoading: false,
+                      onPressed: hasPrev ? prevPage : null,
+                    ),
+                  ),
+
+                  const SizedBox(width: 10),
+
+                  Text(
+                    "Page ${currentPage + 1}",
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+
+                  const SizedBox(width: 10),
+
+                  Expanded(
+                    child: AppButton(
+                      text: "Next",
+                      icon: Icons.arrow_forward,
+                      isLoading: false,
+                      onPressed: hasNext ? nextPage : null,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         );
       }),
     );
   }
 
-  // ================= CARD UI =================
+  // ================= CARD UI (UNCHANGED) =================
   Widget _componentCard(Component item) {
     final name = item.componentName ?? "-";
 

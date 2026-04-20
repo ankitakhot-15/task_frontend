@@ -12,11 +12,7 @@ class AppToast {
   }
 
   static void error(String message) {
-    _showToast(
-      message,
-      background: AppColors.error,
-      icon: Icons.error,
-    );
+    _showToast(message, background: AppColors.error, icon: Icons.error);
   }
 
   static void warning(String message) {
@@ -27,13 +23,13 @@ class AppToast {
     );
   }
 
- static void info(String title, String message) {
-  _showToast(
-    "$title: $message",
-    background: AppColors.primary,
-    icon: Icons.info,
-  );
-}
+  static void info(String title, String message) {
+    _showToast(
+      "$title: $message",
+      background: AppColors.error,
+      icon: Icons.info,
+    );
+  }
 
   static void _showToast(
     String message, {
